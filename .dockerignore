@@ -1,0 +1,10 @@
+.env
+.git
+.gitignore
+.cursor
+__pycache__
+*.pyc
+.venv
+venv
+*.pdf
+generate_diagrama_flujo.py

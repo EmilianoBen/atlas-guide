@@ -1,0 +1,26 @@
+services:
+  atlas-guide:
+    build: .
+    # LAN: http://IP_DE_ESTE_EQUIPO:8000 (misma Wi‑Fi / cable)
+    ports:
+      - "0.0.0.0:8000:8000"
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  # Internet: docker compose --profile tunnel up -d
+  # Requiere NGROK_AUTHTOKEN en .env. Inspector: http://localhost:4040
+  ngrok:
+    image: ngrok/ngrok:latest
+    profiles: ["tunnel"]
+    restart: unless-stopped
+    depends_on:
+      - atlas-guide
+    command:
+      - "http"
+      - "--log=stdout"
+      - "atlas-guide:8000"
+    environment:
+      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
+    ports:
+      - "4040:4040"

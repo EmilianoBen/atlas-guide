@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ATLAS GUIDE</title>
+  <link rel="preload" as="image" href="/assets/hero-bg.png" fetchpriority="high" />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div id="splash" class="splash" aria-live="polite">
+    <div class="splash__inner">
+      <img
+        class="splash__logo"
+        src="/assets/atlas-guide-logo.png"
+        alt="ATLAS GUIDE — VIAJA INTELIGENTE, VIAJA CON ATLAS"
+        width="520"
+        height="auto"
+      />
+      <button type="button" class="splash__skip" id="btnContinuar">Continuar</button>
+    </div>
+  </div>
+
+  <div id="appShell" class="app-shell" hidden>
+    <header class="topbar">
+      <a href="/" class="topbar__logo" title="ATLAS GUIDE">
+        <img src="/assets/atlas-guide-logo.png" alt="ATLAS GUIDE" width="160" height="48" />
+      </a>
+      <div class="topbar__tabs" role="tablist">
+        <button type="button" class="topbar__tab is-active" data-tab="flights" role="tab" aria-selected="true">Vuelos</button>
+        <button type="button" class="topbar__tab" data-tab="hotels" role="tab" aria-selected="false">Hoteles</button>
+        <button type="button" class="topbar__tab" data-tab="airbnb" role="tab" aria-selected="false">Airbnb</button>
+      </div>
+    </header>
+
+    <section id="panelFlights" class="search-panel" data-panel="flights">
+      <form class="search-row" id="flightSearch" autocomplete="off">
+        <label class="sr-only" for="origin">Origen (IATA)</label>
+        <input id="origin" name="origin" type="text" required maxlength="3" placeholder="Origen" class="topbar__input topbar__input--iata" />
+        <label class="sr-only" for="destination">Destino (IATA)</label>
+        <input id="destination" name="destination" type="text" required maxlength="3" placeholder="Destino" class="topbar__input topbar__input--iata" />
+        <label class="sr-only" for="departure_date">Fecha</label>
+        <input id="departure_date" name="departure_date" type="date" required class="topbar__input" />
+        <label class="sr-only" for="adults">Adultos</label>
+        <input id="adults" name="adults" type="number" min="1" max="9" value="1" class="topbar__input topbar__input--num" />
+        <button type="submit" class="btn btn--search">Buscar vuelos</button>
+      </form>
+      <div id="flightStatus" class="status" role="status" aria-live="polite"></div>
+      <div id="flightResults" class="results"></div>
+    </section>
+
+    <section id="panelHotels" class="search-panel search-panel--hidden" data-panel="hotels" hidden>
+      <form class="search-row search-row--wrap" id="hotelSearch" autocomplete="off">
+        <label class="sr-only" for="hotel_city">Ciudad</label>
+        <input id="hotel_city" name="city" type="text" required placeholder="Ciudad (ej. Cancún)" class="topbar__input topbar__input--city" />
+        <label class="sr-only" for="check_in">Entrada</label>
+        <input id="check_in" name="check_in" type="date" required class="topbar__input" />
+        <label class="sr-only" for="check_out">Salida</label>
+        <input id="check_out" name="check_out" type="date" required class="topbar__input" />
+        <label class="sr-only" for="hotel_guests">Huéspedes</label>
+        <input id="hotel_guests" name="guests" type="number" min="1" max="9" value="2" class="topbar__input topbar__input--num" title="Huéspedes" />
+        <label class="sr-only" for="rooms">Habitaciones</label>
+        <input id="rooms" name="rooms" type="number" min="1" max="5" value="1" class="topbar__input topbar__input--num" />
+        <button type="submit" class="btn btn--search">Buscar hoteles</button>
+      </form>
+      <p class="hint">
+        Hoteles: por defecto <strong>Geoapify</strong> (mapa + OSM). <strong>Duffel Stays:</strong> <code>HOTELS_PROVIDER=duffel</code> en <code>.env</code>.
+        <strong>RapidAPI:</strong> <code>HOTELS_PROVIDER=rapidapi</code> más <code>RAPIDAPI_KEY</code>, <code>RAPIDAPI_HOTEL_HOST</code> y <code>RAPIDAPI_SEARCH_PATH</code> (ver <code>.env.example</code>).
+      </p>
+      <div class="airbnb-box">
+        <button type="button" class="btn btn--outline btn--small" id="btnAirbnb">Abrir búsqueda en Airbnb</button>
+      </div>
+      <div id="hotelStatus" class="status" role="status" aria-live="polite"></div>
+      <div id="hotelResults" class="results results--grid"></div>
+    </section>
+
+    <section id="panelAirbnb" class="search-panel search-panel--hidden" data-panel="airbnb" hidden>
+      <form class="search-row search-row--wrap" id="airbnbSearch" autocomplete="off">
+        <label class="sr-only" for="airbnb_place">Destino</label>
+        <input
+          id="airbnb_place"
+          name="query"
+          type="text"
+          required
+          placeholder="Ciudad o zona (ej. Playa del Carmen)"
+          class="topbar__input topbar__input--city"
+        />
+        <label class="sr-only" for="airbnb_check_in">Entrada</label>
+        <input id="airbnb_check_in" name="check_in" type="date" required class="topbar__input" />
+        <label class="sr-only" for="airbnb_check_out">Salida</label>
+        <input id="airbnb_check_out" name="check_out" type="date" required class="topbar__input" />
+        <label class="sr-only" for="airbnb_adults">Adultos</label>
+        <input id="airbnb_adults" name="adults" type="number" min="1" max="16" value="2" class="topbar__input topbar__input--num" title="Adultos" />
+        <label class="sr-only" for="airbnb_children">Niños</label>
+        <input id="airbnb_children" name="children" type="number" min="0" max="5" value="0" class="topbar__input topbar__input--num" title="Niños" />
+        <label class="sr-only" for="airbnb_infants">Bebés</label>
+        <input id="airbnb_infants" name="infants" type="number" min="0" max="5" value="0" class="topbar__input topbar__input--num" title="Bebés" />
+        <button type="submit" class="btn btn--search">Abrir en Airbnb</button>
+      </form>
+      <p class="hint">
+        Casas y apartamentos en <strong>airbnb.com</strong>. No hay API pública de listados: abrimos la búsqueda con tus datos
+        (misma lógica que el botón rápido en Hoteles).
+      </p>
+      <div id="airbnbStatus" class="status" role="status" aria-live="polite"></div>
+    </section>
+
+    <footer class="site-footer">
+      <span>ATLAS GUIDE</span>
+    </footer>
+  </div>
+
+  <div id="chatRoot" class="chat-root">
+    <button
+      type="button"
+      id="chatToggle"
+      class="chat-toggle"
+      aria-expanded="false"
+      aria-controls="chatPanel"
+      title="Asistente ATLAS GUIDE"
+    >
+      <span class="chat-toggle__icon" aria-hidden="true">💬</span>
+      <span class="chat-toggle__label">Asistente</span>
+    </button>
+    <div
+      id="chatPanel"
+      class="chat-panel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="chatPanelTitle"
+      hidden
+    >
+      <header class="chat-panel__head">
+        <h2 id="chatPanelTitle" class="chat-panel__title">Asistente ATLAS</h2>
+        <button type="button" id="chatClose" class="chat-panel__close" aria-label="Cerrar chat">×</button>
+      </header>
+      <div id="chatMessages" class="chat-messages" role="log" aria-live="polite"></div>
+      <form id="chatForm" class="chat-form">
+        <label class="sr-only" for="chatInput">Tu mensaje</label>
+        <input
+          id="chatInput"
+          type="text"
+          class="chat-input"
+          placeholder="Escribe tu pregunta…"
+          autocomplete="off"
+          maxlength="2000"
+        />
+        <button type="submit" class="btn btn--search chat-send">Enviar</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="/static/splash.js"></script>
+  <script src="/static/tabs.js"></script>
+  <script src="/static/flights.js"></script>
+  <script src="/static/hotels.js"></script>
+  <script src="/static/airbnb.js"></script>
+  <script src="/static/chatbot.js"></script>
+</body>
+</html>
