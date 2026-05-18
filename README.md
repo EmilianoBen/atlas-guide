@@ -41,6 +41,11 @@ docker compose up --build -d
 
 5. Abre el navegador en `http://localhost:8000`.
 
+6. Si levantaste el túnel con ngrok, ve a `http://localhost:4040` y en la pestaña "Status"
+   aparece la URL pública que puedes compartir (algo como https://abc123.ngrok-free.app).
+   Cualquiera con esa URL puede usar la app desde su dispositivo. Solo ten en cuenta que
+   con la cuenta gratuita la URL cambia cada vez que reinicias el túnel.
+
 ---
 
 ## Uso
